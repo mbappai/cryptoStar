@@ -1,4 +1,5 @@
-pragma solidity >=0.4.24;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.21 <0.9.0;
 
 //Importing openzeppelin-solidity ERC-721 implemented Standard
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
@@ -14,7 +15,10 @@ contract StarNotary is ERC721 {
     // Implement Task 1 Add a name and symbol properties
     // name: Is a short name to your token
     // symbol: Is a short string like 'USD' -> 'American Dollar'
-    constructor() public ERC721("Beskar","BSK"){
+    string public name_ = "StarNotaryToken";
+    string public symbol_ = "SNT";
+
+    constructor() public ERC721(name_,symbol_){
 
     }
     
@@ -59,15 +63,16 @@ contract StarNotary is ERC721 {
 
     // Implement Task 1 lookUptokenIdToStarInfo
     function lookUptokenIdToStarInfo (uint _tokenId) public view returns (string memory) {
-        //1. You should return the Star saved in tokenIdToStarInfo mapping
-        return tokenIdToStarInfo[_tokenId];
+        //1. You should return the Star saved in tokenIdToStarInfo mapping 
+        Star memory targetToken = tokenIdToStarInfo[_tokenId];
+        return targetToken.name;
     }
 
     // Implement Task 1 Exchange Stars function
     function exchangeStars(uint256 _tokenId1, uint256 _tokenId2) public {
         //1. Passing to star tokenId you will need to check if the owner of _tokenId1 or _tokenId2 is the sender
-        ownerOfToken1 = ownerOf(_tokenId1);
-        ownerOfToken2 = ownerOf(_tokenId2);
+        address ownerOfToken1 = ownerOf(_tokenId1);
+        address ownerOfToken2 = ownerOf(_tokenId2);
         if(msg.sender == ownerOfToken1){
             transferFrom(ownerOfToken1, ownerOfToken2, _tokenId1);
         }else{
