@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <0.9.0;
 
+// import "truffle/Console.sol";
 //Importing openzeppelin-solidity ERC-721 implemented Standard
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
 
@@ -10,6 +11,7 @@ contract StarNotary is ERC721 {
     // Star data
     struct Star {
         string name;
+        // bool isTrue;
     }
 
     // Implement Task 1 Add a name and symbol properties
@@ -52,7 +54,9 @@ contract StarNotary is ERC721 {
         require(starsForSale[_tokenId] > 0, "The Star should be up for sale");
         uint256 starCost = starsForSale[_tokenId];
         address ownerAddress = ownerOf(_tokenId);
+
         require(msg.value > starCost, "You need to have enough Ether");
+        
         transferFrom(ownerAddress, msg.sender, _tokenId); // We can't use _addTokenTo or_removeTokenFrom functions, now we have to use _transferFrom
         address payable ownerAddressPayable = _make_payable(ownerAddress); // We need to make this conversion to be able to use transfer() function to transfer ethers
         ownerAddressPayable.transfer(starCost);
@@ -71,28 +75,22 @@ contract StarNotary is ERC721 {
     // Implement Task 1 Exchange Stars function
     function exchangeStars(uint256 _tokenId1, uint256 _tokenId2) public {
 
-        //Assuming all tokens exist
+        
+        // Confirm all tokens exist
+        // If tokens don't return back an address, it means those tokens were not minted
+        require(ownerOf(_tokenId1) != address(0) && ownerOf(_tokenId2) != address(0));
 
         address ownerOfToken1 = ownerOf(_tokenId1);
         address ownerOfToken2 = ownerOf(_tokenId2);
 
-        // check if the owner of _tokenId1 or _tokenId2 is the sender
-        if(msg.sender == ownerOfToken1){
+        require(msg.sender == ownerOfToken1 || msg.sender == ownerOfToken2, 'You have to own one of the tokens to exchange');
 
-            //Take from msg.sender and give to owner of second token
-            transferFrom(msg.sender, ownerOfToken2, _tokenId1);
+            // _approve(ownerOfToken2, _tokenId2);
+            //Take from owner of first token and give to owner of second token
+            _transfer(ownerOfToken1, ownerOfToken2, _tokenId1);
 
-            //Take from owner of second token and replace what was given by msg.sender
-            transferFrom(ownerOfToken2, msg.sender, _tokenId2);
-        }else{
-            // It means that ownerOfToken2 is our msg.sender
-
-            // Take from msg.sender and give to owner of first token
-            transferFrom(msg.sender, ownerOfToken1, _tokenId2);
-
-            //Take from owner of first token and replace what was given by msg.sender
-            transferFrom(ownerOfToken1, msg.sender, _tokenId1);
-        }
+            //Take from owner of second token and replace what was given by first token owner
+            _transfer(ownerOfToken2, ownerOfToken1, _tokenId2);
 
 
         //1. Passing to star tokenId you will need to check if the owner of _tokenId1 or _tokenId2 is the sender
