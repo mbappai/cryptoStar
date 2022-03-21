@@ -94,19 +94,75 @@ it('can add the star name and star symbol properly', async() => {
 });
 
 it('lets 2 users exchange stars', async() => {
+    //create instance of contract
+    let instance = await StarNotary.deployed();
+
+    let alice={
+        tokenName:'crescent',
+        tokenId:12,
+        address:owner
+    }
+
+    let bob = {
+        tokenName:'tulips',
+        tokenId:13,
+        address: accounts[1]
+    }
+
     // 1. create 2 Stars with different tokenId
+    await instance.createStar(alice.tokenName,alice.tokenId,{from:alice.address});
+    await instance.createStar(bob.tokenName,bob.tokenId,{from:bob.address});
+
     // 2. Call the exchangeStars functions implemented in the Smart Contract
+    await instance.exchangeStars(12,13,{from:owner});
+
+    // Retrive new token owners
+    let newOwnerOfCrescentToken = await instance.ownerOf(alice.tokenId)
+    let newOwnerOfTulipsToken = await instance.ownerOf(bob.tokenId)
+
     // 3. Verify that the owners changed
+    assert.equal(newOwnerOfCrescentToken,bob.address);
+    assert.equal(newOwnerOfTulipsToken,alice.address);
 });
 
 it('lets a user transfer a star', async() => {
+    //create instance of contract
+    let instance = await StarNotary.deployed();
+
+    let alice={
+        tokenName:'crescent',
+        tokenId:12,
+        address:owner
+    }
+
+    let bob=accounts[1]
+    
     // 1. create a Star with different tokenId
+    await instance.createStar(alice.tokenName,alice.tokenId,{from:alice.address});
+
     // 2. use the transferStar function implemented in the Smart Contract
+    await instance.transferStar(bob,alice.tokenId,{from:alice.address});
+
     // 3. Verify the star owner changed.
+    assert.equal(await instance.ownerOf(alice.tokenId),bob);
 });
 
 it('lookUptokenIdToStarInfo test', async() => {
-    // 1. create a Star with different tokenId
+        //create instance of contract
+        let instance = await StarNotary.deployed();
+
+        let alice={
+            tokenName:'crescent',
+            tokenId:16,
+            address:owner
+        }
+        
+        // 1. create a Star with different tokenId
+        await instance.createStar(alice.tokenName,alice.tokenId,{from:alice.address});
+    
     // 2. Call your method lookUptokenIdToStarInfo
+        let tokenName = await instance.lookUptokenIdToStarInfo(alice.tokenId);
+
     // 3. Verify if you Star name is the same
+        assert.equal(tokenName,alice.tokenName);
 });
