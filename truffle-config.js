@@ -25,7 +25,6 @@
 
  const HDWalletProvider = require("@truffle/hdwallet-provider");
 
- const mnemonicPhrase = "shine resemble enact tip reform venture injury badge hold garbage offer forward"
 
 
 module.exports =  {
@@ -41,6 +40,10 @@ module.exports =  {
     port: 9545,
     network_id: "*",
     gasLimit: 0
+  },
+
+  develop:{
+    port:7545
   },
 
   // Another network with more advanced options...
