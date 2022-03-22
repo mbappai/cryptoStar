@@ -61,6 +61,7 @@ module.exports =  {
     provider: () => new HDWalletProvider( process.env.MNEMONIC_PHRASE,
        `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`),
       // numberOfAddresses: 1,
+      from:'0x87906b0E252B370251E58730D7B88FdEEC9d9d8e',
       network_id:4,
       shareNonce: true,
       derivationPath: "m/44'/1'/0'/0/",
