@@ -21,14 +21,15 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
- require('dotenv').config()
+ require('dotenv').config();
 
- import HDWalletProvider from "@truffle/hdwallet-provider";
+ const HDWalletProvider = require("@truffle/hdwallet-provider");
 
- const mnemonicPhrase = "mountains supernatural bird jungle balls jam sack awesome dude fleet bottle plate";
+ const mnemonicPhrase = "shine resemble enact tip reform venture injury badge hold garbage offer forward"
 
 
-export const networks = {
+module.exports =  {
+  networks : {
   // Useful for testing. The `development` name is special - truffle uses it by default
   // if it's defined here and no other network is specified at the command line.
   // You should run a client (like ganache-cli, geth or parity) in a separate terminal
@@ -54,15 +55,15 @@ export const networks = {
   // Useful for deploying to a public network.
   // NB: It's important to wrap the provider as a function.
   rinkeby: {
-    provider: () => new HDWalletProvider({
-      mnemonic: {
-        phrase: mnemonicPhrase
-      },
-      providerOrUrl: `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`,
-      numberOfAddresses: 1,
+    provider: () => new HDWalletProvider( process.env.MNEMONIC_PHRASE,
+       `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`),
+      // numberOfAddresses: 1,
+      network_id:4,
       shareNonce: true,
-      derivationPath: "m/44'/1'/0'/0/"
-    }),
+      derivationPath: "m/44'/1'/0'/0/",
+      networkCheckTimeoutnetworkCheckTimeout: 10000,
+      timeoutBlocks: 200
+    ,
   },
   // Useful for private networks
   // private: {
@@ -70,20 +71,21 @@ export const networks = {
   // network_id: 2111,   // This network is yours, in the cloud.
   // production: true    // Treats this network as if it was a public net. (default: false)
   // }
-};
-export const mocha = {
+},
+mocha : {
   timeout: 100000
-};
-export const compilers = {
+},
+compilers : {
   solc: {
     version: "0.8.9", // Fetch exact version from solc-bin (default: truffle's version)
     // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
     // settings: {          // See the solidity docs for advice about optimization and evmVersion
-    //  optimizer: {
-    //    enabled: false,
-    //    runs: 200
-    //  },
-    //  evmVersion: "byzantium"
+     optimizer: {
+       enabled: true,
+       runs: 200
+     },
+     evmVersion: "byzantium"
     // }
   }
+}
 };
